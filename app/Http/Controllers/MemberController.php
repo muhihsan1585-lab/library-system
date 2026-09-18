@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class MemberController extends Controller
 {
     public function index()
     {
-        return view('member.index');
+        $members = [
+            'Andi',
+            'Budi',
+            'Citra',
+            'Dewi',
+            'Eko'
+        ];
+        return view('members.index', compact('members'));
     }
-}
+};
