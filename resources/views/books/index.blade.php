@@ -5,21 +5,23 @@
 @section('content')
 <h2>Daftar Buku</h2>
 
-<ul>
-    @foreach($books as $key => $book)
-    <li>
-        <strong>Judul : </strong> {{$book}} <br>
-        <strong>Penulis : </strong> {{$authors[$key]}} <br>
-        <strong>Tahun : </strong> {{$years[$key]}} <br>
+<table border="1" cellpadding="8" cellspacing="0">
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Year</th>
+        <th>Stock</th>
+    </tr>
 
-    </li>
+    @foreach ($books as $book)
+    <tr>
+        <td>{{ $book->id }}</td>
+        <td>{{ $book->title }}</td>
+        <td>{{ $book->author }}</td>
+        <td>{{ $book->year }}</td>
+        <td>{{ $book->stock }}</td>
+    </tr>
     @endforeach
-</ul>
-
-@if($stock > 0)
-<p>Stok tersedia: {{ $stock }}</p>
-@else
-<p>Stok habis.</p>
-@endif
-
+</table>
 @endsection
