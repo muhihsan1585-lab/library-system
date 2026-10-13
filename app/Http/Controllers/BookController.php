@@ -9,58 +9,55 @@ class BookController extends Controller
 {
     public function index()
     {
-        $title = 'Daftar Buku';
-        $description = 'Koleksi buku pada Sistem Informasi Perpustakaan.';
-        $stock = 6;
-        // $books = [
-        //     'Pemrograman PHP',
-        //     'Laravel untuk Pemula',
-        //     'Basis Data',
-        //     'Algoritma dan Pemrograman',
-        //     'Pemrograman Berorientasi Objek',
-        //     'Tutorial Menguasai Dunia Dalam 5menit',
-        //     'Tutorial Menghancurkan Karawang Di 2026',
-        //     'Agama Menurut Pandangan Prabowo'
-        // ];
-
         $books = Book::all();
-
-        // $authors = [
-        //     'Ahmad Khusaeri',
-        //     'Billy Ibrahim Hasbi',
-        //     'Caerudin M.Kom',
-        //     'Siska',
-        //     'Muhammad Ihsan',
-        //     'Muhammad Rheza',
-        //     'Ahmad Fahmi',
-        //     'Gibran'
-        // ];
-
-        // $years = [
-        //     2016,
-        //     2020,
-        //     2017,
-        //     2006,
-        //     2011,
-        //     2025,
-        //     2026,
-        //     2026
-        // ];
-
-        // $stock = 8;
-
-        return view('books.index', compact(
-            'books'
-            // 'books',
-            // 'title',
-            // 'stock',
-            // 'description',
-            // 'authors',
-            // 'years'
-        ));
+        return view('books.index', compact('books'));
     }
-    public function show($id)
+
+    public function create()
     {
-        return 'ID Buku: ' . $id;
+        return view('books.create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'year' => 'required|integer|min:1000|max:9999',
+            'stock' => 'required|integer|min:0'
+        ]);
+
+        Book::create($data);
+
+        return redirect()->route('books.index')
+            ->with('success', 'Buku berhasil ditambahkan.');
+    }
+
+    public function edit(Book $book)
+    {
+        return view('books.edit', compact('book'));
+    }
+
+    public function update(Request $request, Book $book)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'year' => 'required|integer|min:1000|max:9999',
+            'stock' => 'required|integer|min:0'
+        ]);
+
+        $book->update($data);
+
+        return redirect()->route('books.index')
+            ->with('success', 'Buku berhasil diperbarui.');
+    }
+
+    public function destroy(Book $book)
+    {
+        $book->delete();
+
+        return redirect()->route('books.index')
+            ->with('success', 'Buku berhasil dihapus.');
     }
 }
