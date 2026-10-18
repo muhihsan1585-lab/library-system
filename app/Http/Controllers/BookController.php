@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BookController extends Controller
 {
@@ -20,14 +21,14 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'year' => 'required|integer|min:1000|max:9999',
-            'stock' => 'required|integer|min:0'
+        $validated = $request->validate([
+            'title' => 'required|string|min:3|max:255|unique:books,title',
+            'author' => ['required', 'string', 'regex:/^[\pL\s.\x27-]+$/u'],
+            'year' => 'required|integer|digits:4|min:1900|max:2026',
+            'stock' => 'required|integer|min:0|max:1000'
         ]);
 
-        Book::create($data);
+        Book::create($validated);
 
         return redirect()->route('books.index')
             ->with('success', 'Buku berhasil ditambahkan.');
@@ -40,17 +41,23 @@ class BookController extends Controller
 
     public function update(Request $request, Book $book)
     {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'year' => 'required|integer|min:1000|max:9999',
-            'stock' => 'required|integer|min:0'
+        $validated = $request->validate([
+            'title' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                Rule::unique('books', 'title')->ignore($book->id)
+            ],
+            'author' => ['required', 'string', 'regex:/^[\pL\s.\x27-]+$/u'],
+            'year' => 'required|integer|digits:4|min:1900|max:2026',
+            'stock' => 'required|integer|min:0|max:1000'
         ]);
 
-        $book->update($data);
+        $book->update($validated);
 
         return redirect()->route('books.index')
-            ->with('success', 'Buku berhasil diperbarui.');
+            ->with('success', 'Data buku berhasil diperbarui.');
     }
 
     public function destroy(Book $book)
