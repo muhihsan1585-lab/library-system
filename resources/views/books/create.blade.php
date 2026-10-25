@@ -6,50 +6,71 @@
 <h2>Tambah Buku</h2>
 
 @if ($errors->any())
-<ul>
-    @foreach ($errors->all() as $error)
-    <li>{{ $error }}</li>
-    @endforeach
-</ul>
+<div class="validation-errors">
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif
 
 <form action="{{ route('books.store') }}" method="POST" novalidate>
     @csrf
 
-
-    <div>
+    <p>
         <label>Title</label><br>
-        <input type="text" name="title" value="{{ old('title') }}">
+        <input type="text" name="title"
+            value="{{ old('title') }}">
         @error('title')
-        <span style="color: red">{{ $message }}</span>
+        <span class="error">{{ $message }}</span>
         @enderror
-    </div>
+    </p>
 
-
-    <div>
-        <label>Author</label>
-        <input type="text" name="author" value="{{ old('author') }}">
+    <p>
+        <label>Author</label><br>
+        <input type="text" name="author"
+            value="{{ old('author') }}">
         @error('author')
-        <p style="color:red">{{ $message }}</p>
+        <span class="error">{{ $message }}</span>
         @enderror
-    </div>
+    </p>
 
-    <div>
-        <label>Year</label>
-        <input type="number" name="year" value="{{ old('year') }}">
+    <p>
+        <label>Year</label><br>
+        <input type="number" name="year"
+            value="{{ old('year') }}">
         @error('year')
-        <p style="color:red">{{ $message }}</p>
+        <span class="error">{{ $message }}</span>
         @enderror
-    </div>
+    </p>
 
-    <div>
-        <label>Stock</label>
-        <input type="number" name="stock" value="{{ old('stock') }}">
+    <p>
+        <label>Stock</label><br>
+        <input type="number" name="stock"
+            value="{{ old('stock', 0) }}">
         @error('stock')
-        <p style="color:red">{{ $message }}</p>
+        <span class="error">{{ $message }}</span>
         @enderror
-    </div>
+    </p>
+
+    <p>
+        <label>Category</label><br>
+        <select name="category_id">
+            <option value="">Pilih kategori</option>
+            @foreach ($categories as $category)
+            <option value="{{ $category->id }}"
+                @selected(old('category_id')==$category->id)>
+                {{ $category->name }}
+            </option>
+            @endforeach
+        </select>
+        @error('category_id')
+        <span class="error">{{ $message }}</span>
+        @enderror
+    </p>
 
     <button type="submit">Simpan</button>
+    <a href="{{ route('books.index') }}">Kembali</a>
 </form>
 @endsection
