@@ -1,19 +1,32 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\http\Controllers\BookController;
-use App\http\Controllers\CategoryController;
-use App\http\Controllers\MemberController;
-use App\http\Controllers\DashboardController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AuthController;
 
-
-Route::get('/', function () {
-    return view('welcome');
+// Route untuk pengguna yang belum login
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 });
 
-Route::resource('books', BookController::class)->except(['show']);
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/members', [MemberController::class, 'index']);
-Route::get('/books/{id}', [BookController::class, 'show']);
-Route::get('/members{id}', [MemberController::class, 'show']);
-Route::get('/dashboard', [DashboardController::class, 'index']);
+// Route yang wajib login
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::resource('books', BookController::class)->except(['show']);
+    Route::get('/books/{id}', [BookController::class, 'show'])->name('books.show');
+
+    Route::resource('categories', CategoryController::class);
+    Route::resource('members', MemberController::class);
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+// Halaman utama
+Route::get('/', function () {
+    return redirect()->route('login');
+});
