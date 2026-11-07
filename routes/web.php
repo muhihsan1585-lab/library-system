@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 // Route untuk pengguna yang belum login
 Route::middleware('guest')->group(function () {
@@ -15,6 +16,9 @@ Route::middleware('guest')->group(function () {
 
 // Route yang wajib login
 Route::middleware('auth')->group(function () {
+    Route::get('/users', [UserController::class, 'index'])
+        ->middleware('can:manage-users')
+        ->name('users.index');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::resource('books', BookController::class)->except(['show']);

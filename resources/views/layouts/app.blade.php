@@ -13,6 +13,9 @@
         <h1>Library System</h1>
         @auth
         <nav>
+            @can('manage-users')
+            <a href="{{ route('users.index') }}">Pengelolaan Pengguna</a>
+            @endcan
             <a href="{{ route('books.index') }}">Books</a>
             <a href="{{ route('categories.index') }}">Categories</a>
             <a href="{{ route('members.index') }}">Members</a>
